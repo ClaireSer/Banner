@@ -6,6 +6,8 @@ use App\Repository\BannerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BannerRepository::class)]
 class Banner
@@ -16,18 +18,23 @@ class Banner
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["GetBanner"])]
+    #[Assert\NotBlank]
     private ?string $backgroundImage = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["GetBanner"])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["GetBanner"])]
     private ?string $description = null;
 
     /**
      * @var Collection<int, Product>
      */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'banner')]
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'banner', cascade: ['persist'])]
+    #[Groups(["GetBanner"])]
     private Collection $products;
 
     public function __construct()

@@ -22,11 +22,17 @@ services:
   database: 
       image: mysql:8.0.32
       environment: 
-          - MYSQL_PASSWORD=root 
+          # - MYSQL_PASSWORD=root
           - MYSQL_DATABASE=app
           - MYSQL_ROOT_PASSWORD=root
       ports: 
           - "${MYSQL_PORT:-3306}:3306"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
 
 volumes:
 ###> doctrine/doctrine-bundle ###

@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Sortable\Entity\Repository\SortableRepository;
 
-#[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\Entity(repositoryClass: SortableRepository::class)]
+
 class Product
 {
     #[ORM\Id]
@@ -16,21 +20,31 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["GetProduct"])]
+    #[Assert\NotBlank]
     private ?string $image = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["GetBanner", "GetProduct"])]
+    #[Assert\NotBlank]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["GetProduct"])]
+    #[Assert\NotBlank]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(["GetProduct"])]
+    #[Assert\NotBlank]
     private ?float $price = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["GetProduct"])]
     private ?float $reducedPrice = null;
 
     #[ORM\Column]
+    #[Gedmo\SortablePosition]
     private ?int $position = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
@@ -39,7 +53,7 @@ class Product
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'products')]
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'products', cascade: ['persist'])]
     private Collection $categories;
 
     public function __construct()
