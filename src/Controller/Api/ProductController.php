@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -18,9 +19,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ProductController extends AbstractController
 {
     #[Route('/products', name: 'products', methods: ['GET'])]
-    public function getProducts(ProductRepository $productRepository, SerializerInterface $serializer): JsonResponse
+    public function getProducts(
+        ProductRepository $productRepository, 
+        SerializerInterface $serializer,
+        Request $request
+    ): JsonResponse
     {
-        $product = $productRepository->findAll();
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 3);
+
+        $product = $productRepository->findAllWithPagination($page, $limit);
         $productSerialized = $serializer->serialize($product, 'json', ['groups' => 'GetBanner']);
 
         return new JsonResponse($productSerialized, Response::HTTP_OK, [], true);
@@ -35,6 +43,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/{id}', name: 'deleteProduct', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'More priviledge are required to access the resource.')]
     public function deleteProduct(Product $product, EntityManagerInterface $em): JsonResponse
     {
         $em->remove($product);
@@ -44,6 +53,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/edit/{id}', name: 'editProduct', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN', message: 'More priviledge are required to access the resource.')]
     public function editProduct(
         Request $request, 
         Product $product, 
@@ -63,6 +73,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/create', name: 'createProduct', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'More priviledge are required to access the resource.')]
     public function createProduct(
         Request $request, 
         SerializerInterface $serializer,

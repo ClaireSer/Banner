@@ -20,23 +20,25 @@ class AppFixtures extends Fixture
             ->setPosition(1)
         ;
 
-        $product1 = new Product();
-        $product1
-            ->setImage('image')
-            ->setTitle('product1')
-            ->setDescription('hello world')
-            ->setPrice(100)
-            ->setPosition(1)
-            ->addCategory($category)
-        ;
-
         $banner = new Banner();
         $banner
             ->setTitle('hello')
             ->setDescription('this is it')
             ->setBackgroundImage('image')
-            ->addProduct($product1)
         ;
+
+        for ($i=0; $i < 30; $i++) { 
+            $product = new Product();
+            $product
+                ->setImage("image$i")
+                ->setTitle("product$i")
+                ->setDescription("This is my product$i")
+                ->setPrice(rand(10, 200))
+                ->addCategory($category)
+                ->setBanner($banner)
+            ;
+            $manager->persist($product);
+        }
 
         $manager->persist($banner);
         $manager->flush();

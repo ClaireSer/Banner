@@ -27,3 +27,6 @@
 /tools/php-cs-fixer/vendor
 .php-cs-fixer.cache
 .vscode/launch.json
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
