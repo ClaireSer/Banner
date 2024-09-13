@@ -18,3 +18,5 @@ Technical overview of what is present :
 
 # INIT DB
 Run `composer initdb`.
+
+IN PROGRESS...
